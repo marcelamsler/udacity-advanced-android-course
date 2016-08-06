@@ -15,17 +15,19 @@
  */
 package com.example.android.sunshine.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN;
 
 public class Utility {
     public static String getPreferredLocation(Context context) {
@@ -259,5 +261,19 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+
+    public static void setLocationStatus(Context context, @SunshineSyncAdapter.LocationStatus int locationStatus) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(context.getString(R.string.location_status_key), locationStatus);
+        editor.commit();
+    }
+
+    @SuppressWarnings("ResourceType")
+    public static @SunshineSyncAdapter.LocationStatus int getLocationStatus(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getInt(context.getString(R.string.location_status_key), LOCATION_STATUS_UNKNOWN);
     }
 }

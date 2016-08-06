@@ -59,12 +59,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int WEATHER_NOTIFICATION_ID = 3004;
 
     @Retention(SOURCE)
-    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UKNOWN})
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
     public @interface LocationStatus {}
-    private static final int LOCATION_STATUS_OK = 0;
-    private static final int LOCATION_STATUS_SERVER_DOWN = 1;
-    private static final int LOCATION_STATUS_SERVER_INVALID = 2;
-    private static final int LOCATION_STATUS_UKNOWN = 3;
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
 
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
@@ -87,7 +87,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
-        saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_UKNOWN);
+        Utility.setLocationStatus(getContext(), LOCATION_STATUS_UNKNOWN);
         String locationQuery = Utility.getPreferredLocation(getContext());
 
         // These two need to be declared outside the try/catch
@@ -147,21 +147,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             if (buffer.length() == 0) {
-                saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_DOWN);
+                Utility.setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 // Stream was empty.  No point in parsing.
                 return;
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
-            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_OK);
+            Utility.setLocationStatus(getContext(), LOCATION_STATUS_OK);
         } catch (IOException e) {
-            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_DOWN);
+            Utility.setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
-            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_INVALID);
+            Utility.setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
@@ -175,13 +175,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
-    }
-
-    private void saveLocationStatusToSharedPreferences(Context context, @LocationStatus int locationStatus) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(context.getString(R.string.location_status), locationStatus);
-        editor.commit();
     }
 
     /**
