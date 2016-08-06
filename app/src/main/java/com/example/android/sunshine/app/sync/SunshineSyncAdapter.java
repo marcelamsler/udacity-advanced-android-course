@@ -87,7 +87,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
-        saveLocationStatusToSharedPreferences(LOCATION_STATUS_UKNOWN);
+        saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_UKNOWN);
         String locationQuery = Utility.getPreferredLocation(getContext());
 
         // These two need to be declared outside the try/catch
@@ -147,21 +147,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             if (buffer.length() == 0) {
-                saveLocationStatusToSharedPreferences(LOCATION_STATUS_SERVER_DOWN);
+                saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 // Stream was empty.  No point in parsing.
                 return;
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
-            saveLocationStatusToSharedPreferences(LOCATION_STATUS_OK);
+            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_OK);
         } catch (IOException e) {
-            saveLocationStatusToSharedPreferences(LOCATION_STATUS_SERVER_DOWN);
+            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_DOWN);
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
-            saveLocationStatusToSharedPreferences(LOCATION_STATUS_SERVER_INVALID);
+            saveLocationStatusToSharedPreferences(getContext(), LOCATION_STATUS_SERVER_INVALID);
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
@@ -177,10 +177,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveLocationStatusToSharedPreferences(@LocationStatus int locationStatus) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    private void saveLocationStatusToSharedPreferences(Context context, @LocationStatus int locationStatus) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(getContext().getString(R.string.location_status), locationStatus);
+        editor.putInt(context.getString(R.string.location_status), locationStatus);
         editor.commit();
     }
 
