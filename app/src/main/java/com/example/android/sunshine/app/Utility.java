@@ -271,6 +271,10 @@ public class Utility {
         editor.commit();
     }
 
+    public static void setLocationStatusToUknown(Context context) {
+        setLocationStatus(context, LOCATION_STATUS_UNKNOWN);
+    }
+
     @SuppressWarnings("ResourceType")
     public static @SunshineSyncAdapter.LocationStatus int getLocationStatus(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

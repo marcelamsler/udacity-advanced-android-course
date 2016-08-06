@@ -85,7 +85,6 @@ public class SettingsActivity extends PreferenceActivity
 
     private void setPreferenceSummary(Preference preference, Object value) {
         String stringValue = value.toString();
-        String key = preference.getKey();
 
         if (preference instanceof ListPreference) {
             // For list preferences, look up the correct display value in
@@ -104,6 +103,11 @@ public class SettingsActivity extends PreferenceActivity
     // This gets called before the preference is changed
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
+        String key = preference.getKey();
+        if (key.equals(R.string.pref_location_key)) {
+            Utility.setLocationStatusToUknown(this);
+        }
+
         setPreferenceSummary(preference, value);
         return true;
     }

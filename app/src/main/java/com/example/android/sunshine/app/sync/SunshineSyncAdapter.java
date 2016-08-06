@@ -65,6 +65,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+    private static final int LOCATION_STATUS_INVALID = 4;
 
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
@@ -87,7 +88,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
-        Utility.setLocationStatus(getContext(), LOCATION_STATUS_UNKNOWN);
+        Utility.setLocationStatusToUknown(getContext());
         String locationQuery = Utility.getPreferredLocation(getContext());
 
         // These two need to be declared outside the try/catch
