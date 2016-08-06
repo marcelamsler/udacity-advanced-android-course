@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
@@ -41,9 +42,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
@@ -53,6 +57,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
+
+    @Retention(SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UKNOWN})
+    public @interface LocationStatus {}
+    private static final int LOCATION_STATUS_OK = 0;
+    private static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    private static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    private static final int LOCATION_STATUS_UKNOWN = 3;
 
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
