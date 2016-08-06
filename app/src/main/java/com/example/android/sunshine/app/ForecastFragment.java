@@ -99,7 +99,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(Uri dateUri);
+        void onItemSelected(Uri dateUri);
     }
 
     public ForecastFragment() {
@@ -268,20 +268,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 mListView.smoothScrollToPosition(mPosition);
             }
         } else {
-            ConnectivityManager cm =
-                    (ConnectivityManager) getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
-
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-            boolean isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-
-            if (!isConnected) {
+            if (!Utility.hasNetworkConnection(getActivity())) {
                 mEmptyListView.setText(getResources().getText(R.string.no_network_connection));
             }
         }
 
     }
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
