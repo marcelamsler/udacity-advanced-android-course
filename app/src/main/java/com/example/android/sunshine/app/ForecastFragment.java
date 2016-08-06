@@ -15,12 +15,8 @@
  */
 package com.example.android.sunshine.app;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,18 +24,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import android.widget.TextView;
 import com.example.android.sunshine.app.data.WeatherContract;
-import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
@@ -260,21 +249,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data.getCount() > 0) {
-            mForecastAdapter.swapCursor(data);
-            if (mPosition != ListView.INVALID_POSITION) {
-                // If we don't need to restart the loader, and there's a desired position to restore
-                // to, do so now.
-                mListView.smoothScrollToPosition(mPosition);
-            }
-        } else {
-            if (!Utility.hasNetworkConnection(getActivity())) {
-                mEmptyListView.setText(getResources().getText(R.string.no_network_connection));
-            }
+
+        mForecastAdapter.swapCursor(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            // If we don't need to restart the loader, and there's a desired position to restore
+            // to, do so now.
+            mListView.smoothScrollToPosition(mPosition);
         }
 
+        updateEmptyViewText(data);
     }
-
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -287,4 +271,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
         }
     }
+
+    private void updateEmptyViewText(Cursor data) {
+        if (data.getCount() == 0) {
+            int message;
+            //We don't know why it is empty. Location possibly wrong
+            message = R.string.no_network_connection;
+
+            if (!Utility.hasNetworkConnection(getActivity())) {
+                message = R.string.no_network_connection;
+            }
+
+            mEmptyListView.setText(message);
+        }
+    }
+
 }
