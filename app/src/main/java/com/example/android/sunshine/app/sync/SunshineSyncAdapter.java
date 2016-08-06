@@ -230,12 +230,18 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
 
-            int messageStatusCode = forecastJson.getInt(OWN_MESSAGE_CODE);
+            if (forecastJson.has(OWN_MESSAGE_CODE)) {
+                int messageStatusCode = forecastJson.getInt(OWN_MESSAGE_CODE);
 
-            if (messageStatusCode == 404) {
-               throw new InvalidLocationException();
+                switch (messageStatusCode) {
+                    case HttpURLConnection.HTTP_OK:
+                        break;
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        throw new InvalidLocationException();
+                    default:
+                        throw new JSONException("Could not find messageStatus in JSON Object.");
+                }
             }
-
 
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 

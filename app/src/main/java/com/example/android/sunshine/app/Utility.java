@@ -272,7 +272,10 @@ public class Utility {
     }
 
     public static void setLocationStatusToUknown(Context context) {
-        setLocationStatus(context, LOCATION_STATUS_UNKNOWN);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(context.getString(R.string.location_status_key), LOCATION_STATUS_UNKNOWN);
+        editor.apply();
     }
 
     @SuppressWarnings("ResourceType")
