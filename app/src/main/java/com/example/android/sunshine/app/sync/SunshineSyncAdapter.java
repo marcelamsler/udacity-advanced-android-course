@@ -107,7 +107,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
             final String FORECAST_BASE_URL =
-                    "http://google.com/ping?";
+                    "http://api.openweathermap.org/data/2.5/forecast/daily?";
             final String QUERY_PARAM = "q";
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
@@ -147,6 +147,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             if (buffer.length() == 0) {
+                saveLocationStatusToSharedPreferences(LOCATION_STATUS_SERVER_DOWN);
                 // Stream was empty.  No point in parsing.
                 return;
             }
@@ -176,12 +177,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-
     private void saveLocationStatusToSharedPreferences(@LocationStatus int locationStatus) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getContext().getString(R.string.location_status), locationStatus);
-        editor.apply();
+        editor.commit();
     }
 
     /**
