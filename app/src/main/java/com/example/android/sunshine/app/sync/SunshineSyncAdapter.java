@@ -34,7 +34,7 @@ import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
 
-import com.example.android.sunshine.app.expections.InvalidLocationException;
+import com.example.android.sunshine.app.exceptions.InvalidLocationException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
