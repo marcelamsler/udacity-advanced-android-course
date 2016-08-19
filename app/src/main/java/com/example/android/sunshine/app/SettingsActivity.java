@@ -18,6 +18,7 @@ package com.example.android.sunshine.app;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncAdapterType;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -94,6 +95,20 @@ public class SettingsActivity extends PreferenceActivity
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
+        } else if (preference.getKey().equals(getString(R.string.pref_location_key))) {
+            @SunshineSyncAdapter.LocationStatus int locationStatus = Utility.getLocationStatus(this);
+
+            switch(locationStatus) {
+                case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                    preference.setSummary(getString(R.string.pref_location_error_description, stringValue));
+                    break;
+                case SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN:
+                    preference.setSummary(getString(R.string.pref_location_unknown_description, stringValue));
+                    break;
+                default:
+                    preference.setSummary(stringValue);
+            }
+
         } else {
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
@@ -103,11 +118,6 @@ public class SettingsActivity extends PreferenceActivity
     // This gets called before the preference is changed
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
-        String key = preference.getKey();
-        if (key.equals(R.string.pref_location_key)) {
-            Utility.setLocationStatusToUknown(this);
-        }
-
         setPreferenceSummary(preference, value);
         return true;
     }
@@ -116,11 +126,15 @@ public class SettingsActivity extends PreferenceActivity
     // start our synchronization here
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if ( key.equals(getString(R.string.pref_location_key)) ) {
+        if (key.equals(getString(R.string.pref_location_key))) {
+            Utility.setLocationStatusToUknown(this);
             SunshineSyncAdapter.syncImmediately(this);
-        } else if ( key.equals(getString(R.string.pref_units_key)) ) {
+        } else if (key.equals(getString(R.string.pref_units_key))) {
             // units have changed. update lists of weather entries accordingly
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
+        } else if(key.equals(getString(R.string.location_status_key))) {
+            Preference locationPreference = findPreference(getString(R.string.pref_location_key));
+            bindPreferenceSummaryToValue(locationPreference);
         }
     }
 
