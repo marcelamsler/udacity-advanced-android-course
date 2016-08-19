@@ -60,9 +60,9 @@ public class LocationEditTextPreference extends EditTextPreference implements Te
             Button posButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
             if (mEditText.getText().length() < mMinLength)  {
-                posButton.setVisibility(View.GONE);
+                posButton.setEnabled(false);
             } else {
-                posButton.setVisibility(View.VISIBLE);
+                posButton.setEnabled(true);
             }
         }
     }
