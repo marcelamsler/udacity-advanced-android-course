@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package com.example.android.sunshine.app.messaging;
 
 import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
