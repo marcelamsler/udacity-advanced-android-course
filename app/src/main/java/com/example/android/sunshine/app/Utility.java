@@ -263,6 +263,12 @@ public class Utility {
         return -1;
     }
 
+    public static String getArtUrlForWeatherCondition(int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        return "bla";
+    }
+
 
     public static void setLocationStatus(Context context, @SunshineSyncAdapter.LocationStatus int locationStatus) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
