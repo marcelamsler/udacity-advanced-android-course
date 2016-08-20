@@ -187,7 +187,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             // Download weather art image
             Glide.with(this)
-                    .load(Utility.getArtUrlForWeatherCondition(weatherId))
+                    .load(Utility.getArtUrlForWeatherCondition(getActivity(), weatherId))
                     .error(Utility.getArtResourceForWeatherCondition(weatherId))
                     .into(mIconView);
 
